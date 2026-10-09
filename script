@@ -1,6 +1,8 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local UserInputService = game:GetService("UserInputService")
+local ScreenGui = Instance.new("ScreenGui")
+local UIButton = Instance.new("TextButton")
 
 local positions = {
     Vector3.new(-18, 4.1, 26),
@@ -19,7 +21,7 @@ local positions = {
     Vector3.new(48, 4, -64),
     Vector3.new(65, 4, -64),
     Vector3.new(76, 4, -63),
-    Vector3.new(87, 4, -57), 
+    Vector3.new(87, 4, -57),
     Vector3.new(93, 4, -45),
     Vector3.new(95, 4, -31),
     Vector3.new(98, 4, -20),
@@ -27,12 +29,19 @@ local positions = {
     Vector3.new(96, 4, 4),
     Vector3.new(91, 4, 14),
     Vector3.new(80, 4, 19),
-    Vector3.new(70, 4, 15)
+    Vector3.new(70, 4, 15),
+    Vector3.new(59, 4, 13)
 }
 
 local moving = false
 local currentIndex = 1
-local waitTime = 0.5
+local waitTime = 1
+
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+UIButton.Size = UDim2.new(0, 100, 0, 50)
+UIButton.Position = UDim2.new(1, -110, 0, 10)
+UIButton.Text = "Autofarm"
+UIButton.Parent = ScreenGui
 
 local function teleportToPosition(position)
     if character and character:FindFirstChild("HumanoidRootPart") then
@@ -47,17 +56,18 @@ local function onToggleTeleport()
             teleportToPosition(positions[currentIndex])
             currentIndex = currentIndex + 1
             if currentIndex > #positions then
-                currentIndex = 1 
+                currentIndex = 1
             end
             wait(waitTime)
         end
     end
 end
 
+UIButton.MouseButton1Click:Connect(onToggleTeleport)
+
 UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     if gameProcessedEvent then return end
-    
-    if input.KeyCode == Enum.KeyCode.E then
+    if input.KeyCode == Enum.KeyCode.E and not UserInputService.TouchEnabled then
         onToggleTeleport()
     end
 end)
